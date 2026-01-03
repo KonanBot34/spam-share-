@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FB Share UI</title>
+
+<!-- Inter Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:'Inter',sans-serif;
+}
+
+body{
+  margin:0;
+  background:linear-gradient(180deg,#eaf3ff,#f8fbff);
+  color:#0f172a;
+}
+
+/* HEADER */
+header{
+  background:#ffffff;
+  padding:14px 16px;
+  font-weight:700;
+  box-shadow:0 4px 20px rgba(0,0,0,.05);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.container{
+  padding:16px;
+  max-width:480px;
+  margin:auto;
+}
+
+/* CARD */
+.card{
+  background:#ffffff;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:16px;
+  box-shadow:0 10px 30px rgba(15,23,42,.08);
+}
+
+.label{
+  font-weight:600;
+  margin-bottom:6px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+input,textarea{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #c7ddff;
+  background:#f8fbff;
+  outline:none;
+  font-size:14px;
+}
+
+textarea{
+  min-height:120px;
+  resize:none;
+}
+
+.row{
+  display:flex;
+  gap:12px;
+}
+
+.row .card{
+  flex:1;
+}
+
+/* BUTTON */
+.btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  background:linear-gradient(90deg,#60a5fa,#38bdf8);
+  color:#fff;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* PROGRESS */
+.progress-card{
+  background:linear-gradient(135deg,#eaf3ff,#ffffff);
+  border-radius:18px;
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:0 10px 25px rgba(15,23,42,.08);
+}
+
+.progress-meta{
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  color:#64748b;
+}
+
+.progress-id{
+  color:#2563eb;
+  font-weight:600;
+}
+
+.progress-url{
+  font-size:12px;
+  margin:8px 0;
+  word-break:break-all;
+}
+
+.progress-bar{
+  width:100%;
+  height:10px;
+  background:#dbeafe;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#60a5fa,#38bdf8);
+  transition:width .4s ease;
+}
+
+.progress-actions{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+.progress-actions button{
+  flex:1;
+  padding:10px;
+  border-radius:14px;
+  border:none;
+  font-size:13px;
+  cursor:pointer;
+}
+
+.stop-btn{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.details-btn{
+  background:#e0f2fe;
+  color:#075985;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  ✈ FB SHARE
+  ☰
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <div class="label">🔗 Target Post URL</div>
+    <input id="urls" placeholder="https://www.facebook.com/share/..." />
+  </div>
+
+  <div class="card">
+    <div class="label">🍪 Facebook Cookies</div>
+    <textarea placeholder="ONE COOKIE PER LINE • Use fresh cookies"></textarea>
+  </div>
+
+  <div class="row">
+    <div class="card">
+      <div class="label"># Share Limit</div>
+      <input id="amounts" type="number" value="10">
+    </div>
+    <div class="card">
+      <div class="label">⏱ Delay (ms)</div>
+      <input type="number" value="1">
+    </div>
+  </div>
+
+  <button class="btn" onclick="submitForm()">🚀 START SHARING</button>
+
+  <div style="margin-top:20px" id="progress-list"></div>
+
+</div>
+
+<script>
+function submitForm(){
+  const url = document.getElementById('urls').value;
+  const limit = parseInt(document.getElementById('amounts').value || 0);
+
+  const id = Date.now();
+  const list = document.getElementById('progress-list');
+
+  const card = document.createElement('div');
+  card.className = 'progress-card';
+
+  card.innerHTML = `
+    <div class="progress-meta">
+      <span class="progress-id">ID: ${id}</span>
+      <span>Started: Now</span>
+    </div>
+
+    <div class="progress-url">${url}</div>
+
+    <div class="progress-meta">
+      <span class="count">0 / ${limit}</span>
+      <span>Status: Running</span>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
+
+    <div class="progress-actions">
+      <button class="stop-btn">✘ Stop</button>
+      <button class="details-btn">ℹ Details</button>
+    </div>
+  `;
+
+  list.prepend(card);
+
+  let count = 0;
+  const fill = card.querySelector('.progress-fill');
+  const countText = card.querySelector('.count');
+
+  const interval = setInterval(()=>{
+    if(count >= limit){
+      clearInterval(interval);
+      return;
+    }
+    count++;
+    fill.style.width = (count/limit)*100 + '%';
+    countText.textContent = `${count} / ${limit}`;
+  },300);
+}
+</script>
+
+</body>
+</html>
